@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stock.DowJonesIndex.model.StockData;
-//import com.stock.DowJonesIndex.repository.StockDataRepository;
 import com.stock.DowJonesIndex.repository.StockDataRepository;
 import com.stock.DowJonesIndex.util.StockDataPOJO;
 
@@ -35,15 +34,10 @@ public class StockOperationsService implements StockServiceInterface {
 	@Autowired
 	StockData stockData;
 
+	/* (non-Javadoc)
+	 * @see com.stock.DowJonesIndex.service.StockServiceInterface#saveFile(org.springframework.web.multipart.MultipartFile)
+	 */
 	public String saveFile(MultipartFile multipartFile) throws IOException {
-
-		final String fileType = "text/csv";
-
-		/*
-		 * InputStream inputStream = multipartFile.getInputStream(); new
-		 * BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-		 * .lines() .forEach(System.out::println);
-		 */
 
 		InputStream inputStream2 = multipartFile.getInputStream();
 		new BufferedReader(new InputStreamReader(inputStream2, StandardCharsets.UTF_8)).lines().skip(1).forEach(s -> {
@@ -58,18 +52,25 @@ public class StockOperationsService implements StockServiceInterface {
 
 			System.out.println(stockData.toString());
 			stockDataRepository.save(stockData);
-			// }
 		});
 		return null;
 
 	}
 
+	/**
+	 * @param stock
+	 * @return
+	 */
 	public List<StockData> findByStock(String stock) {
 
 		return stockDataRepository.findByStock(stock);
 
 	}
 
+	/**
+	 * @param sd
+	 * @return
+	 */
 	public String saveJsonStock(StockDataPOJO sd) {
 		try {
 			StockData stockData = new StockData();

@@ -5,6 +5,8 @@ package com.stock.DowJonesIndex.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,52 +32,49 @@ import com.stock.DowJonesIndex.util.StockDataPOJO;
 @Controller
 @RequestMapping("/api/stock-data")
 public class StockOperationsController {
+
+	private static final Logger LOGGER =  LoggerFactory.getLogger(StockOperationsController.class);
 	
 	@Autowired
 	StockOperationsService stockOperationsService;
-	
-	
+
 	@GetMapping(value = "/{stock}")
-	public ResponseEntity<List<StockData>>  getStockData(@PathVariable("stock") String stock){
-		List<StockData> stockDataList = stockOperationsService.findByStock(stock);
-		
-		return new ResponseEntity<>(stockDataList, HttpStatus.OK);
-		
+	public ResponseEntity<List<StockData>> getStockData(@PathVariable("stock") String stock) {
+		try {
+			LOGGER.info("Fetching data for:{}",stock);
+			List<StockData> stockDataList = stockOperationsService.findByStock(stock);
+			return new ResponseEntity<>(stockDataList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		}
+
 	}
 
-	
 	@PostMapping(value = "/bulk-insert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> bulkInsertDataFile(@RequestPart("file") MultipartFile file){
-		
+	public ResponseEntity<String> bulkInsertDataFile(@RequestPart("file") MultipartFile file) {
 		try {
+			LOGGER.info("Uploading file:{}",file.getName());
 			return new ResponseEntity<>(stockOperationsService.saveFile(file), HttpStatus.OK);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
 		}
-		return null;
-		
+
 	}
-	
-	
+
 	@PostMapping(value = "/")
-	public ResponseEntity<String> postStockData(@RequestBody  StockDataPOJO stockDataFromRequest){
-	
+	public ResponseEntity<String> postStockData(@RequestBody StockDataPOJO stockDataFromRequest) {
 		try {
 			StockDataPOJO sd = new ObjectMapper().convertValue(stockDataFromRequest, StockDataPOJO.class);
-			System.out.println(sd.toString());
-			
-			
-			
+			LOGGER.info("Inserting new record:{}",sd.toString());
 			return new ResponseEntity<>(stockOperationsService.saveJsonStock(sd), HttpStatus.OK);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
 		}
-		return null;
 		
+
 	}
-	
-	
-	
+
 }

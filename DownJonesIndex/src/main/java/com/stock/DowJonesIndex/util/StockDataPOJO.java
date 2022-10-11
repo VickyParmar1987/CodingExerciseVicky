@@ -1,7 +1,5 @@
 package com.stock.DowJonesIndex.util;
 
-import java.sql.Date;
-
 public class StockDataPOJO {
 	
 	

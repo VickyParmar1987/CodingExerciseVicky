@@ -14,20 +14,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableWebMvc
 @SpringBootApplication
 @EnableSwagger2
-public class DowJonesIndexApplication{
+public class DowJonesIndexApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DowJonesIndexApplication.class, args);
 	}
-	 
 
 	@Bean
-    public Docket api() { 
-        return new Docket(DocumentationType.SWAGGER_2)  
-          .select()                                  
-          .apis(RequestHandlerSelectors.any())              
-          .paths(PathSelectors.any())                          
-          .build();                                           
-    }
+	public Docket api() {
+		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
+				.paths(PathSelectors.any()).build();
+	}
 
 }
